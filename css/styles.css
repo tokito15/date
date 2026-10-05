@@ -1,0 +1,872 @@
+/* ---------------- Reset & Base ---------------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background: #0f0518;
+  min-height: 100vh;
+  min-height: calc(var(--vh, 1vh) * 100);
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Content can legitimately be taller than the viewport (long calendar +
+     time list on short/narrow screens) - clip horizontally only, and let
+     the page scroll vertically instead of cutting content off. */
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* ---------------- Animated Background ---------------- */
+.bg-gradient-animated {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: radial-gradient(ellipse at 20% 50%, #1a0a2e 0%, #0f0518 70%);
+  animation: bgPulse 8s ease-in-out infinite alternate;
+}
+
+@keyframes bgPulse {
+  0% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.bg-orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.3;
+  animation: orbFloat 12s ease-in-out infinite alternate;
+}
+
+.bg-orb--pink {
+  width: 500px;
+  height: 500px;
+  background: #ff6b9d;
+  top: -100px;
+  right: -100px;
+}
+
+.bg-orb--purple {
+  width: 400px;
+  height: 400px;
+  background: #8b5cf6;
+  bottom: -80px;
+  left: -80px;
+  animation-delay: 4s;
+}
+
+.bg-orb--gold {
+  width: 300px;
+  height: 300px;
+  background: #ffd700;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation-delay: 8s;
+  opacity: 0.08;
+}
+
+@keyframes orbFloat {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    transform: translate(40px, 30px) scale(1.2);
+  }
+}
+
+/* ---------------- Floating Hearts ---------------- */
+.hearts-container {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.heart-float {
+  position: absolute;
+  font-size: 1.2rem;
+  opacity: 0.15;
+  animation: heartRise linear infinite;
+  user-select: none;
+}
+
+@keyframes heartRise {
+  0% {
+    transform: translateY(100vh) scale(0.6) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.15;
+  }
+  90% {
+    opacity: 0.15;
+  }
+  100% {
+    transform: translateY(-10vh) scale(1.2) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* ---------------- App Container ---------------- */
+.app-container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 480px;
+  padding: 24px 16px;
+  margin: 0 auto;
+  min-height: 100vh;
+  min-height: calc(var(--vh, 1vh) * 100);
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---------------- Glass Card ---------------- */
+.glass-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 40px;
+  padding: 36px 28px 32px;
+  width: 100%;
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transition: all 0.4s ease;
+  position: relative;
+  /* NOTE: intentionally no overflow:hidden here - the card's height is
+     auto/content-driven, so nothing needs clipping, and hiding overflow
+     was cropping the ::before mask ring on some pages. */
+}
+
+.glass-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 40px;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 107, 157, 0.3),
+    rgba(139, 92, 246, 0.1)
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* ---------------- Pages ---------------- */
+.page {
+  display: none;
+  animation: pageFadeIn 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+.page.active {
+  display: block;
+}
+
+@keyframes pageFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ---------------- Typography ---------------- */
+.font-display {
+  font-family: "Playfair Display", serif;
+}
+
+/* ---------------- Buttons ---------------- */
+.btn-primary {
+  background: linear-gradient(135deg, #ff6b9d, #e8557a);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  padding: 14px 32px;
+  border-radius: 60px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  box-shadow: 0 8px 30px rgba(255, 107, 157, 0.35);
+  letter-spacing: 0.3px;
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 12px 40px rgba(255, 107, 157, 0.5);
+}
+
+.btn-primary:active {
+  transform: scale(0.96);
+}
+
+.btn-primary::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 60px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), transparent);
+  pointer-events: none;
+}
+
+.btn-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-weight: 500;
+  padding: 14px 32px;
+  border-radius: 60px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  backdrop-filter: blur(8px);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
+}
+
+.btn-no-wrapper {
+  display: inline-block;
+}
+
+.btn-no {
+  background: rgba(255, 70, 70, 0.15);
+  border: 1px solid rgba(255, 70, 70, 0.25);
+  color: #ff6b6b;
+  font-weight: 600;
+  padding: 14px 32px;
+  border-radius: 60px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  position: relative;
+  white-space: nowrap;
+}
+
+.btn-no:hover {
+  background: rgba(255, 70, 70, 0.25);
+  transform: scale(0.95);
+}
+
+/* On touch devices there's no hover, so the "dodge" trick can't work off
+   mouseenter - keep the button reachable and let the tap-counter messages
+   carry the playfulness instead. */
+@media (hover: none) {
+  .btn-no-wrapper {
+    transform: none !important;
+  }
+}
+
+/* ---------------- Food Grid ---------------- */
+.food-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.food-item {
+  background: rgba(255, 255, 255, 0.04);
+  border: 2px solid rgba(255, 255, 255, 0.06);
+  border-radius: 20px;
+  padding: 16px 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.food-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-2px);
+}
+
+.food-item.selected {
+  border-color: #ff6b9d;
+  background: rgba(255, 107, 157, 0.15);
+  box-shadow: 0 0 30px rgba(255, 107, 157, 0.15);
+  color: #fff;
+  transform: scale(1.02);
+}
+
+.food-item .emoji {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.food-item .label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+/* ---------------- Calendar ---------------- */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.calendar-grid .day-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.3);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 6px 0;
+  text-align: center;
+}
+
+.calendar-grid .day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.23, 1, 0.32, 1);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.calendar-grid .day:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+.calendar-grid .day.selected {
+  background: linear-gradient(135deg, #ff6b9d, #e8557a);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(255, 107, 157, 0.35);
+  transform: scale(1.05);
+}
+
+.calendar-grid .day.empty {
+  cursor: default;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.15);
+}
+
+.calendar-grid .day.empty:hover {
+  background: transparent;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  gap: 8px;
+}
+
+.calendar-header .month-year {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #fff;
+  text-align: center;
+  flex: 1;
+}
+
+.calendar-header .nav-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.25s;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calendar-header .nav-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+/* ---------------- Time Grid ---------------- */
+.time-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.time-item {
+  background: rgba(255, 255, 255, 0.04);
+  border: 2px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 10px 6px;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.23, 1, 0.32, 1);
+  white-space: nowrap;
+}
+
+.time-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.time-item.selected {
+  border-color: #ff6b9d;
+  background: rgba(255, 107, 157, 0.15);
+  color: #fff;
+  box-shadow: 0 0 20px rgba(255, 107, 157, 0.12);
+}
+
+/* ---------------- Confetti ---------------- */
+.confetti-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.confetti-piece {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  opacity: 0;
+  animation: confettiFall linear forwards;
+}
+
+@keyframes confettiFall {
+  0% {
+    opacity: 1;
+    transform: translateY(-20px) rotate(0deg) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(110vh) rotate(720deg) scale(0.3);
+  }
+}
+
+/* ---------------- Misc ---------------- */
+.text-shadow-glow {
+  text-shadow: 0 0 40px rgba(255, 107, 157, 0.3);
+}
+
+.glow-ring {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.15;
+  animation: ringPulse 3s ease-in-out infinite alternate;
+}
+
+.glow-ring--pink {
+  width: 300px;
+  height: 300px;
+  background: #ff6b9d;
+  top: -80px;
+  right: -80px;
+}
+
+.glow-ring--purple {
+  width: 200px;
+  height: 200px;
+  background: #8b5cf6;
+  bottom: -60px;
+  left: -60px;
+  animation-delay: 1.5s;
+}
+
+@keyframes ringPulse {
+  0% {
+    opacity: 0.08;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0.2;
+    transform: scale(1.2);
+  }
+}
+
+.confirmation-detail {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 16px;
+  padding: 12px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.confirmation-detail .icon {
+  font-size: 1.4rem;
+  width: 36px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.confirmation-detail .text {
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  overflow-wrap: anywhere;
+}
+
+.confirmation-detail .sub {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.heartbeat {
+  animation: heartbeat 1.4s ease-in-out infinite;
+  display: inline-block;
+}
+
+@keyframes heartbeat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  14% {
+    transform: scale(1.2);
+  }
+  28% {
+    transform: scale(1);
+  }
+  42% {
+    transform: scale(1.15);
+  }
+  56% {
+    transform: scale(1);
+  }
+}
+
+/* Progress dots */
+.progress-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.progress-dots .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  transition: all 0.4s ease;
+}
+
+.progress-dots .dot.active {
+  background: #ff6b9d;
+  box-shadow: 0 0 16px rgba(255, 107, 157, 0.4);
+  width: 24px;
+  border-radius: 4px;
+}
+
+.progress-dots .dot.done {
+  background: rgba(255, 107, 157, 0.3);
+}
+
+/* ---------------- Responsive ---------------- */
+
+/* Extra-small phones (older/small Android, iPhone SE-and-below) */
+@media (max-width: 359px) {
+  .app-container {
+    padding: 16px 10px;
+  }
+
+  .glass-card {
+    padding: 22px 14px 20px;
+    border-radius: 24px;
+  }
+
+  .progress-dots {
+    margin-bottom: 16px;
+  }
+
+  .food-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .food-item {
+    padding: 10px 4px;
+    border-radius: 14px;
+  }
+
+  .food-item .emoji {
+    font-size: 1.5rem;
+  }
+
+  .food-item .label {
+    font-size: 0.68rem;
+  }
+
+  .calendar-grid {
+    gap: 3px;
+  }
+
+  .calendar-grid .day,
+  .calendar-grid .day-label {
+    font-size: 0.65rem;
+  }
+
+  .calendar-grid .day {
+    border-radius: 8px;
+  }
+
+  .calendar-header .month-year {
+    font-size: 0.85rem;
+  }
+
+  .calendar-header .nav-btn {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    font-size: 0.85rem;
+  }
+
+  .time-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+
+  .time-item {
+    padding: 8px 4px;
+    font-size: 0.72rem;
+    border-radius: 10px;
+  }
+
+  .btn-primary,
+  .btn-secondary,
+  .btn-no {
+    padding: 11px 20px;
+    font-size: 0.85rem;
+  }
+}
+
+/* Small phones */
+@media (min-width: 360px) and (max-width: 420px) {
+  .glass-card {
+    padding: 28px 18px 24px;
+    border-radius: 28px;
+  }
+
+  .food-grid {
+    gap: 8px;
+  }
+
+  .food-item {
+    padding: 12px 4px;
+    border-radius: 16px;
+  }
+
+  .food-item .emoji {
+    font-size: 1.6rem;
+  }
+
+  .food-item .label {
+    font-size: 0.7rem;
+  }
+
+  .time-grid {
+    gap: 6px;
+  }
+
+  .time-item {
+    padding: 8px 4px;
+    font-size: 0.72rem;
+    border-radius: 12px;
+  }
+
+  .calendar-grid .day {
+    font-size: 0.75rem;
+    border-radius: 10px;
+  }
+
+  .btn-primary,
+  .btn-secondary,
+  .btn-no {
+    padding: 12px 24px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Short viewports (landscape phones) - tighten vertical rhythm so the
+   calendar + time grid + button don't force excessive scrolling */
+@media (max-height: 600px) and (orientation: landscape) {
+  .app-container {
+    padding: 14px 16px;
+    align-items: flex-start;
+  }
+
+  .glass-card {
+    padding: 20px 24px;
+  }
+
+  .progress-dots {
+    margin-bottom: 14px;
+  }
+
+  .food-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .time-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+@media (min-width: 421px) and (max-width: 767px) {
+  .food-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 768px) {
+  .app-container {
+    max-width: 560px;
+    padding: 24px;
+  }
+
+  .glass-card {
+    padding: 48px 40px 40px;
+    border-radius: 48px;
+  }
+
+  .food-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  .food-item {
+    padding: 20px 12px;
+    border-radius: 24px;
+  }
+
+  .food-item .emoji {
+    font-size: 2.4rem;
+  }
+
+  .food-item .label {
+    font-size: 0.9rem;
+  }
+
+  .time-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  .time-item {
+    padding: 12px 8px;
+    font-size: 0.9rem;
+    border-radius: 16px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .app-container {
+    max-width: 640px;
+    padding: 32px;
+  }
+
+  .glass-card {
+    padding: 56px 48px 44px;
+    border-radius: 56px;
+  }
+
+  .food-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+
+  .time-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Hide scrollbar (visual only - scrolling itself stays enabled) */
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+* {
+  scrollbar-width: none;
+}
+
+.animate-bounce-slow {
+  animation: bounceSlow 2s infinite;
+}
+
+@keyframes bounceSlow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
